@@ -9,23 +9,29 @@
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
         }
         .scoreboard {
-            display: flex;
-            flex-wrap: wrap; /* Allow wrapping to next row */
-            justify-content: center; /* Center the items horizontally */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns */
+            grid-gap: 20px; /* Space between images */
+            max-height: 1630px;
             margin-top: 20px;
+            overflow-y: auto; /* Allow vertical scrolling if needed */
         }
         .contestant {
-            margin: 15px;
             position: relative;
-            width: calc(33.33% - 30px); /* Adjust width to allow 3 items per row */
-            box-sizing: border-box; /* Make sure the padding and margin are included in the width */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .contestant img {
-            width: 100%; /* The image will scale based on the width of the container */
-            height: auto; /* Maintain aspect ratio */
-            border-radius: 0; /* Remove border-radius to avoid round images */
+            max-width: 100%; /* Ensure the image fills the width of its container */
+            max-height: 100%; /* Ensure the image doesn't exceed the container's height */
+            object-fit: contain; /* Keep aspect ratio intact */
         }
         .score {
             position: absolute;
@@ -110,4 +116,3 @@
     </script>
 </body>
 </html>
-

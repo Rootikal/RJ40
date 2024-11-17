@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard2</title>
+    <title>Taskmaster Scoreboardddddd</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,15 +21,17 @@
             margin: 15px;
             position: relative;
             width: 150px;
-            text-align: center;
         }
         .contestant img {
             width: 150px;
-            height: auto;
+            height: 150px;
+            border-radius: 50%;
             border: 3px solid #000;
         }
         .score {
-            margin-top: 10px;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
             background-color: red;
             color: white;
             font-family: "Courier New", Courier, monospace;
@@ -40,8 +43,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: auto;
-            margin-right: auto;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
     </style>
@@ -53,83 +54,55 @@
     <script>
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
-        const fallbackUrl = `https://docs.google.com/spreadsheets/d/1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU/export?format=csv`;
 
         async function fetchScores() {
             try {
-                const response = await fetch(sheetUrl); // Try the gviz/tq URL
-                if (!response.ok) {
-                    console.error('Failed with gviz/tq URL. Trying fallback URL...');
-                    return await fetchFallback(fallbackUrl);
-                }
-
+                const response = await fetch(sheetUrl);
                 const data = await response.text();
-                processCSVData(data); // Function to process and render the scoreboard
+
+                // Ensure consistent line endings and split rows
+                const rows = data.replace(/\r/g, '').split('\n').map(row => {
+                    // Use a safer CSV split to handle commas in data
+                    return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
+                });
+
+                // Clear the scoreboard
+                const scoreboard = document.getElementById('scoreboard');
+                scoreboard.innerHTML = '';
+
+                // Skip header row and populate contestants
+                rows.slice(1).forEach(row => {
+                    const [contestant, task1, task2, task3, total, url] = row;
+
+                    // Validate data to avoid unexpected issues
+                    if (!contestant || !url || isNaN(total)) {
+                        console.warn('Skipping invalid row:', row);
+                        return;
+                    }
+
+                    // Create contestant card
+                    const contestantDiv = document.createElement('div');
+                    contestantDiv.className = 'contestant';
+
+                    // Contestant image
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = contestant;
+
+                    // Score circle
+                    const score = document.createElement('div');
+                    score.className = 'score';
+                    score.textContent = total;
+
+                    // Append to contestant div
+                    contestantDiv.appendChild(img);
+                    contestantDiv.appendChild(score);
+                    scoreboard.appendChild(contestantDiv);
+                });
             } catch (error) {
                 console.error('Error fetching data:', error);
                 alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');
             }
-        }
-
-        async function fetchFallback(url) {
-            try {
-                const response = await fetch(url);
-                const data = await response.text();
-                processCSVData(data);
-            } catch (error) {
-                console.error('Error with fallback URL:', error);
-                alert('Both primary and fallback URLs failed.');
-            }
-        }
-
-        function processCSVData(data) {
-            const rows = data.replace(/\r/g, '').split('\n').map(row => row.split(','));
-            const scoreboard = document.getElementById('scoreboard');
-            scoreboard.innerHTML = ''; // Clear previous content
-
-            rows.slice(1).forEach(row => {
-                const [contestant, task1, task2, task3, total, url] = row;
-
-                // Debugging logs
-                console.log('Row Data:', { contestant, task1, task2, task3, total, url });
-
-                // Trim the total value to remove any extra spaces
-                const totalTrimmed = total.trim();
-                console.log('Trimmed Total:', totalTrimmed);
-
-                // Skip rows if contestant or URL is missing, or total is not a valid number
-                if (!contestant || !url || isNaN(totalTrimmed) || totalTrimmed === '') {
-                    console.log(`Skipping invalid contestant: ${contestant} (total: ${totalTrimmed}, url: ${url})`);
-                    return;
-                }
-
-                // Create contestant div and append image and score
-                const contestantDiv = document.createElement('div');
-                contestantDiv.className = 'contestant';
-
-                const img = document.createElement('img');
-                img.src = url.trim();
-                img.alt = contestant;
-
-                const score = document.createElement('div');
-                score.className = 'score';
-                score.textContent = totalTrimmed; // Use trimmed total
-
-                contestantDiv.appendChild(img);
-                contestantDiv.appendChild(score);
-                scoreboard.appendChild(contestantDiv);
-            });
-
-            // Sort contestants by score (ascending)
-            const contestantDivs = Array.from(scoreboard.children);
-            contestantDivs.sort((a, b) => {
-                const scoreA = parseInt(a.querySelector('.score').textContent, 10);
-                const scoreB = parseInt(b.querySelector('.score').textContent, 10);
-                return scoreA - scoreB;
-            });
-
-            // Reorder the scoreboard
-            contestantDivs.forEach(div => scoreboard.appendChild(div));
         }
 
         // Fetch scores initially and every 5 seconds

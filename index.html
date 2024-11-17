@@ -39,6 +39,9 @@
             width: 22%; /* Make images occupy 22% of the width for 4 images per row */
             margin-bottom: 20px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .contestant img {
@@ -48,9 +51,6 @@
         }
 
         .score {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
             background-color: red;
             color: white;
             font-family: "Courier New", Courier, monospace;
@@ -62,6 +62,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-top: 20px; /* Space between the image and score */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -77,10 +78,6 @@
         }
 
         .large-score {
-            position: absolute;
-            bottom: -10px; /* 10px below the large image */
-            left: 50%;
-            transform: translateX(-50%); /* Center the score horizontally */
             background-color: red;
             color: white;
             font-family: "Courier New", Courier, monospace;
@@ -92,13 +89,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-top: 20px; /* Space between the image and score */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-left: auto;
+            margin-right: auto;
         }
 
     </style>
 </head>
 <body>
-    
     <div class="scoreboard" id="scoreboard">
         <!-- Left section for the small images -->
         <div class="left-section" id="left-section"></div>

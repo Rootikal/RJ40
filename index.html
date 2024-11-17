@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboardhhh</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -65,10 +65,33 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        .large-image {
+            position: relative;
+            width: 100%;
+        }
+
         .large-image img {
             width: 100%;
             height: auto;
             object-fit: contain;
+        }
+
+        .large-score {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: red;
+            color: white;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 30px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
     </style>
@@ -138,7 +161,21 @@
                         // Add the large image to the right section (only 1 large image)
                         const largeImageDiv = document.createElement('div');
                         largeImageDiv.className = 'large-image';
-                        largeImageDiv.appendChild(img);
+                        
+                        // Large image
+                        const largeImg = document.createElement('img');
+                        largeImg.src = url;
+                        largeImg.alt = contestant;
+
+                        // Large score circle
+                        const largeScore = document.createElement('div');
+                        largeScore.className = 'large-score';
+                        largeScore.textContent = total;
+
+                        // Append to large image div
+                        largeImageDiv.appendChild(largeImg);
+                        largeImageDiv.appendChild(largeScore);
+
                         rightSection.appendChild(largeImageDiv);
                     }
                 });

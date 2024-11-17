@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard yeah</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -23,9 +23,9 @@
             box-sizing: border-box; /* Make sure the padding and margin are included in the width */
         }
         .contestant img {
-            width: 100%; /* Make the image responsive */
-            height: 150px;
-            /* No border or frame around the image */
+            width: 100%; /* The image will scale based on the width of the container */
+            height: auto; /* Maintain aspect ratio */
+            border-radius: 0; /* Remove border-radius to avoid round images */
         }
         .score {
             position: absolute;
@@ -110,3 +110,4 @@
     </script>
 </body>
 </html>
+

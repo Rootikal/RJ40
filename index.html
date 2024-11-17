@@ -78,8 +78,9 @@
 
         .large-score {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            bottom: -10px; /* 10px below the large image */
+            left: 50%;
+            transform: translateX(-50%); /* Center the score horizontally */
             background-color: red;
             color: white;
             font-family: "Courier New", Courier, monospace;
@@ -97,6 +98,7 @@
     </style>
 </head>
 <body>
+    
     <div class="scoreboard" id="scoreboard">
         <!-- Left section for the small images -->
         <div class="left-section" id="left-section"></div>
@@ -167,7 +169,7 @@
                         largeImg.src = url;
                         largeImg.alt = contestant;
 
-                        // Large score circle
+                        // Large score circle (below the image)
                         const largeScore = document.createElement('div');
                         largeScore.className = 'large-score';
                         largeScore.textContent = total;

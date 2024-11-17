@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskmaster Scoreboard</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .contestant {
+      margin: 15px;
+      text-align: center;
+    }
+    .photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid white;
+      margin-bottom: 10px;
+    }
+    .score-circle {
+      background-color: red;
+      color: white;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1.5em;
+      font-weight: bold;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const sheetId = '2PACX-1vQ4emdPfmEuQ6jnPvi0dpK1RLAFkNRa5MpO2zyNmHtbQEboK6tcs2TNiNnDOR6uzlcDleaV5MmbWr16'; // Replace with your Google Sheet ID
+    const apiUrl = `https://spreadsheets.google.com/feeds/list/${sheetId}/1/public/values?alt=json`;
+
+    function fetchDataAndUpdate() {
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const entries = data.feed.entry;
+          const container = document.body;
+          container.innerHTML = ''; // Clear previous content
+
+          entries.forEach(entry => {
+            const name = entry['gsx$contestant']['$t'];
+            const url = entry['gsx$url']['$t'];
+            const total = entry['gsx$total']['$t'];
+
+            // Create contestant block
+            const contestantDiv = document.createElement('div');
+            contestantDiv.className = 'contestant';
+
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = name;
+            img.className = 'photo';
+
+            const scoreCircle = document.createElement('div');
+            scoreCircle.className = 'score-circle';
+            scoreCircle.innerText = total;
+
+            contestantDiv.appendChild(img);
+            contestantDiv.appendChild(scoreCircle);
+            container.appendChild(contestantDiv);
+          });
+        })
+        .catch(err => console.error('Error fetching data:', err));
+    }
+
+    // Fetch data every 5 seconds
+    fetchDataAndUpdate();
+    setInterval(fetchDataAndUpdate, 5000);
+  </script>
+</body>
+</html>

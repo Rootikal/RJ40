@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboardwwwww</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,27 +15,27 @@
 
         .scoreboard {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 columns */
+            grid-template-columns: repeat(4, 1fr) 1.5fr; /* 4 small images + 1 large image */
+            grid-template-rows: repeat(2, auto); /* Two rows */
             grid-gap: 20px; /* Space between images */
             max-height: 1630px; /* Max height of the container */
             margin-top: 20px;
-            overflow-y: auto; /* Allow vertical scrolling if needed */
-            padding-bottom: 20px; /* Ensure there's space at the bottom if content overflows */
+            padding-bottom: 20px;
+            overflow-y: auto;
         }
 
         .contestant {
             position: relative;
             width: 100%;
-            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .contestant img {
-            width: 50%; /* Make images 50% of their original size */
+            width: 100%; /* Scale image to the container width */
             height: auto; /* Maintain aspect ratio */
-            object-fit: contain; /* Ensure the image fits without being cropped */
+            object-fit: contain; /* Ensure the image fits without cropping */
         }
 
         .score {
@@ -55,6 +55,15 @@
             justify-content: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
+        /* For the large image on the right */
+        .large-image {
+            grid-row: span 2; /* Makes the large image span both rows */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
     </style>
 </head>
 <body>
@@ -80,7 +89,7 @@
                 scoreboard.innerHTML = '';
 
                 // Skip header row and populate contestants
-                rows.slice(1).forEach(row => {
+                rows.slice(1).forEach((row, index) => {
                     const [contestant, task1, task2, task3, total, url] = row;
 
                     // Validate data to avoid unexpected issues
@@ -106,7 +115,17 @@
                     // Append to contestant div
                     contestantDiv.appendChild(img);
                     contestantDiv.appendChild(score);
-                    scoreboard.appendChild(contestantDiv);
+
+                    // Add to the grid
+                    if (index < 8) {
+                        scoreboard.appendChild(contestantDiv);
+                    } else {
+                        // Add the larger image for the last entry
+                        const largeImageDiv = document.createElement('div');
+                        largeImageDiv.className = 'large-image';
+                        largeImageDiv.appendChild(img);
+                        scoreboard.appendChild(largeImageDiv);
+                    }
                 });
             } catch (error) {
                 console.error('Error fetching data:', error);

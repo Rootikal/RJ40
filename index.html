@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard2</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,8 +61,15 @@
 
                 // Process CSV Data
                 const rows = data.replace(/\r/g, '').split('\n').map(row => row.split(','));
+
+                // Debug: Log parsed rows
+                console.log('Parsed Rows:', rows);
+
                 const contestants = rows.slice(1).map(row => {
                     const [contestant, task1, task2, task3, total, url] = row;
+
+                    // Debug: Log each row's values
+                    console.log('Row Values:', { contestant, task1, task2, task3, total, url });
 
                     // Validate data
                     if (!contestant || !url || isNaN(total)) return null;
@@ -72,7 +79,10 @@
                         total: parseInt(total.trim(), 10),
                         url: url.trim()
                     };
-                }).filter(Boolean); // Remove any null values
+                }).filter(Boolean); // Remove any invalid rows
+
+                // Debug: Log valid contestants
+                console.log('Valid Contestants:', contestants);
 
                 // Sort by total score (ascending)
                 contestants.sort((a, b) => a.total - b.total);
@@ -114,6 +124,7 @@
     </script>
 </body>
 </html>
+
 
 
 

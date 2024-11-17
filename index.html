@@ -1,148 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard4</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f9f9f9;
-        }
-        .scoreboard {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .contestant {
-            margin: 15px;
-            position: relative;
-            width: 150px;
-            text-align: center;
-        }
-        .contestant img {
-            width: 150px;
-            height: auto;
-            border: 3px solid #000;
-        }
-        .score {
-            margin-top: 10px;
-            background-color: red;
-            color: white;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: auto;
-            margin-right: auto;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-</head>
-<body>
-    <h1>Taskmaster Scoreboard4</h1>
-    <div class="scoreboard" id="scoreboard"></div>
+async function fetchScores() {
+    const fallbackUrl = `https://docs.google.com/spreadsheets/d/1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU/export?format=csv`;
 
-    <script>
-        const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
-
-        async function fetchScores() {
-            try {
-                const response = await fetch(sheetUrl);
-                const data = await response.text();
-
-                // Debug: Log raw CSV data
-                console.log('Raw Data from Google Sheets:', data);
-
-                // Process CSV Data (split into rows and then columns)
-                const rows = data.replace(/\r/g, '').split('\n').map(row => row.split(','));
-
-                // Debug: Log parsed rows
-                console.log('Parsed Rows:', rows);
-
-                const contestants = rows.slice(1).map(row => {
-                    const [contestant, task1, task2, task3, total, url] = row;
-
-                    // Debug: Log each row's values
-                    console.log('Row Values:', { contestant, task1, task2, task3, total, url });
-
-                    // Validation:
-                    // - Check if contestant and URL are valid
-                    // - Check if total score is a valid number
-                    if (!contestant || !url || isNaN(total) || total.trim() === '') {
-                        console.log(`Skipping invalid contestant: ${contestant} (total: ${total}, url: ${url})`);
-                        return null;  // Skip invalid rows
-                    }
-
-                    // Valid contestant
-                    return {
-                        contestant: contestant.trim(),
-                        total: parseInt(total.trim(), 10),
-                        url: url.trim()
-                    };
-                }).filter(Boolean);  // Remove any invalid rows
-
-                // Debug: Log valid contestants
-                console.log('Valid Contestants:', contestants);
-
-                // Check if no valid contestants were found
-                if (contestants.length === 0) {
-                    console.log('No valid contestants found in the sheet.');
-                    return;  // Exit early if no valid contestants
-                }
-
-                // Sort by total score (ascending)
-                contestants.sort((a, b) => a.total - b.total);
-
-                // Clear the scoreboard first
-                const scoreboard = document.getElementById('scoreboard');
-                scoreboard.innerHTML = ''; // Make sure it's cleared
-
-                // Render sorted contestants
-                contestants.forEach(({ contestant, total, url }) => {
-                    // Create contestant card
-                    const contestantDiv = document.createElement('div');
-                    contestantDiv.className = 'contestant';
-
-                    // Contestant image
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.alt = contestant;
-
-                    // Score circle
-                    const score = document.createElement('div');
-                    score.className = 'score';
-                    score.textContent = total;
-
-                    // Append elements
-                    contestantDiv.appendChild(img);
-                    contestantDiv.appendChild(score);
-                    scoreboard.appendChild(contestantDiv);
-                });
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');
-            }
+    try {
+        const response = await fetch(sheetUrl); // Try the gviz/tq URL
+        if (!response.ok) {
+            console.error('Failed with gviz/tq URL. Trying fallback URL...');
+            return await fetchFallback(fallbackUrl);
         }
 
-        // Fetch scores initially and every 5 seconds
-        fetchScores();
-        setInterval(fetchScores, 5000);
-    </script>
-</body>
-</html>
+        const data = await response.text();
+        processCSVData(data); // Function to process and render the scoreboard
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');
+    }
+}
 
+async function fetchFallback(url) {
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        processCSVData(data);
+    } catch (error) {
+        console.error('Error with fallback URL:', error);
+        alert('Both primary and fallback URLs failed.');
+    }
+}
 
+function processCSVData(data) {
+    const rows = data.replace(/\r/g, '').split('\n').map(row => row.split(','));
+    const scoreboard = document.getElementById('scoreboard');
+    scoreboard.innerHTML = ''; // Clear previous content
 
+    rows.slice(1).forEach(row => {
+        const [contestant, task1, task2, task3, total, url] = row;
 
+        // Debugging logs
+        console.log('Row Data:', { contestant, task1, task2, task3, total, url });
 
+        // Trim the total value to remove any extra spaces
+        const totalTrimmed = total.trim();
+        console.log('Trimmed Total:', totalTrimmed);
 
+        // Skip rows if contestant or URL is missing, or total is not a valid number
+        if (!contestant || !url || isNaN(totalTrimmed) || totalTrimmed === '') {
+            console.log(`Skipping invalid contestant: ${contestant} (total: ${totalTrimmed}, url: ${url})`);
+            return;
+        }
+
+        // Create contestant div and append image and score
+        const contestantDiv = document.createElement('div');
+        contestantDiv.className = 'contestant';
+
+        const img = document.createElement('img');
+        img.src = url.trim();
+        img.alt = contestant;
+
+        const score = document.createElement('div');
+        score.className = 'score';
+        score.textContent = totalTrimmed; // Use trimmed total
+
+        contestantDiv.appendChild(img);
+        contestantDiv.appendChild(score);
+        scoreboard.appendChild(contestantDiv);
+    });
+}

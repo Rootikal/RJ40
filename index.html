@@ -48,14 +48,15 @@
             width: 100%;
             height: auto;
             object-fit: contain; /* Preserve aspect ratio */
+            position: relative;
+            z-index: 1;
         }
 
         .score {
             position: absolute;
-            top: 0;
+            bottom: -25px; /* Position the score below the image */
             left: 0;
             right: 0;
-            bottom: 0;
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
             color: transparent; /* Hide default text to only show behind seal */
@@ -65,6 +66,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 60px;
+            height: 60px;
             z-index: -1; /* Place score behind the image */
         }
 

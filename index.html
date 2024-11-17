@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard</title>
+    <title>Taskmaster Scoreboarddds</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -68,7 +68,7 @@
             justify-content: center;
             width: 60px;
             height: 60px;
-            z-index: -1; /* Place score behind the image */
+            z-index: 2; /* Ensure the score appears in front of the seal */
         }
 
         .large-image {
@@ -95,12 +95,13 @@
             align-items: center;
             justify-content: center;
             margin-top: 20px;
-            z-index: -1;
+            z-index: 2; /* Ensure the score is in front of the large seal */
         }
 
     </style>
 </head>
 <body>
+    <h1>Taskmaster Scoreboard</h1>
     <div class="scoreboard" id="scoreboard">
         <!-- Left section for the small images -->
         <div class="left-section" id="left-section"></div>

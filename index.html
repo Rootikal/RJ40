@@ -16,7 +16,7 @@
         .scoreboard {
             display: grid;
             grid-template-columns: repeat(4, 1fr) 1.5fr; /* 4 small images + 1 large image */
-            grid-template-rows: repeat(2, auto); /* Two rows */
+            grid-template-rows: repeat(2, 1fr); /* Two rows */
             grid-gap: 20px; /* Space between images */
             max-height: 1630px; /* Max height of the container */
             margin-top: 20px;
@@ -118,7 +118,7 @@
 
                     // Add to the grid
                     if (index < 8) {
-                        scoreboard.appendChild(contestantDiv);
+                        scoreboard.appendChild(contestantDiv); // Small images
                     } else {
                         // Add the larger image for the last entry
                         const largeImageDiv = document.createElement('div');

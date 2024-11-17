@@ -58,7 +58,12 @@
             try {
                 const response = await fetch(sheetUrl);
                 const data = await response.text();
-                const rows = data.split('\n').map(row => row.split(','));
+
+                // Ensure consistent line endings and split rows
+                const rows = data.replace(/\r/g, '').split('\n').map(row => {
+                    // Use a safer CSV split to handle commas in data
+                    return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
+                });
 
                 // Clear the scoreboard
                 const scoreboard = document.getElementById('scoreboard');
@@ -68,13 +73,19 @@
                 rows.slice(1).forEach(row => {
                     const [contestant, task1, task2, task3, total, url] = row;
 
+                    // Validate data to avoid unexpected issues
+                    if (!contestant || !url || isNaN(total)) {
+                        console.warn('Skipping invalid row:', row);
+                        return;
+                    }
+
                     // Create contestant card
                     const contestantDiv = document.createElement('div');
                     contestantDiv.className = 'contestant';
 
                     // Contestant image
                     const img = document.createElement('img');
-                    img.src = url.trim();
+                    img.src = url;
                     img.alt = contestant;
 
                     // Score circle
@@ -99,4 +110,5 @@
     </script>
 </body>
 </html>
+
 

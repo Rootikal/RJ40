@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboarddds</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -49,19 +49,18 @@
             height: auto;
             object-fit: contain; /* Preserve aspect ratio */
             position: relative;
-            z-index: 1;
         }
 
         .score {
             position: absolute;
-            bottom: -25px; /* Position the score below the image */
-            left: 0;
-            right: 0;
+            bottom: -40px; /* Position the score below the image */
+            left: 50%; /* Start from the middle of the container */
+            transform: translateX(-50%); /* Center the score horizontally */
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
-            color: transparent; /* Hide default text to only show behind seal */
+            color: white; /* Set score font color to white */
             font-family: "Courier New", Courier, monospace;
-            font-size: 30px;
+            font-size: 20px;
             font-weight: bold;
             display: flex;
             align-items: center;
@@ -83,9 +82,13 @@
         }
 
         .large-score {
+            position: absolute;
+            top: calc(50% + 20px); /* Center vertically, slightly below middle */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%);
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
-            color: transparent;
+            color: white; /* Set score font color to white */
             font-family: "Courier New", Courier, monospace;
             font-size: 40px;
             font-weight: bold;
@@ -94,10 +97,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-top: 20px;
             z-index: 2; /* Ensure the score is in front of the large seal */
         }
-
     </style>
 </head>
 <body>
@@ -191,8 +192,8 @@
         }
 
         // Fetch scores initially and every 5 seconds
-        fetchScores();
-        setInterval(fetchScores, 5000);
+        //fetchScores();
+        //setInterval(fetchScores, 5000);
     </script>
 </body>
 </html>

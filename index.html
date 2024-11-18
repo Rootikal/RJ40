@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboardwwwwww</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,7 +25,7 @@
             flex-wrap: wrap;
             justify-content: space-between;
             width: 70%; /* Left side takes 70% of the width */
-            gap: 20px 40px; /* Horizontal gap: 20px, Vertical gap: 40px */
+            gap: 30px 100px; /* Horizontal gap: 30px, Vertical gap: 100px */
         }
 
         .right-section {
@@ -37,7 +37,6 @@
 
         .contestant {
             width: 22%; /* Make images occupy 22% of the width for 4 images per row */
-            margin-bottom: 20px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -49,24 +48,25 @@
             height: auto;
             object-fit: contain; /* Preserve aspect ratio */
             position: relative;
+            transform: rotate(calc(-5deg + (10 * random()))); /* Slight jaunty angle */
         }
 
         .score {
             position: absolute;
-            bottom: -60px; /* Position the score further below the image */
+            bottom: -100px; /* Adjust position further below the image */
             left: 50%; /* Start from the middle of the container */
             transform: translateX(-50%); /* Center the score horizontally */
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
             color: white; /* Set score font color to white */
             font-family: "Courier New", Courier, monospace;
-            font-size: 28px;
+            font-size: 37px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 80px; /* Larger seal size */
-            height: 80px;
+            width: 140px;
+            height: 100px;
             z-index: 2; /* Ensure the score appears in front of the seal */
         }
 
@@ -92,7 +92,7 @@
             font-family: "Courier New", Courier, monospace;
             font-size: 40px;
             font-weight: bold;
-            width: 100px;
+            width: 140px;
             height: 100px;
             display: flex;
             align-items: center;
@@ -102,7 +102,6 @@
     </style>
 </head>
 <body>
-    <h1>Taskmaster Scoreboard</h1>
     <div class="scoreboard" id="scoreboard">
         <!-- Left section for the small images -->
         <div class="left-section" id="left-section"></div>
@@ -114,6 +113,10 @@
     <script>
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+
+        function random() {
+            return Math.random() * 2 - 1; // Random value between -1 and 1
+        }
 
         async function fetchScores() {
             try {
@@ -197,4 +200,3 @@
     </script>
 </body>
 </html>
-

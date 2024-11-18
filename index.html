@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard</title>
+    <title>Taskmaster Scoreboardwwwwww</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background-color: #f9f9f9;
-            margin: 0;
+            margin: 0 10px; /* Add 10px margin to the left and right */
             padding: 0;
         }
 
@@ -25,7 +25,7 @@
             flex-wrap: wrap;
             justify-content: space-between;
             width: 70%; /* Left side takes 70% of the width */
-            gap: 20px;
+            gap: 20px 40px; /* Horizontal gap: 20px, Vertical gap: 40px */
         }
 
         .right-section {
@@ -53,20 +53,20 @@
 
         .score {
             position: absolute;
-            bottom: -40px; /* Position the score below the image */
+            bottom: -60px; /* Position the score further below the image */
             left: 50%; /* Start from the middle of the container */
             transform: translateX(-50%); /* Center the score horizontally */
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
             color: white; /* Set score font color to white */
             font-family: "Courier New", Courier, monospace;
-            font-size: 20px;
+            font-size: 28px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 60px;
-            height: 60px;
+            width: 80px; /* Larger seal size */
+            height: 80px;
             z-index: 2; /* Ensure the score appears in front of the seal */
         }
 
@@ -102,7 +102,7 @@
     </style>
 </head>
 <body>
-    <h1>Taskmaster Scoreboardsss</h1>
+    <h1>Taskmaster Scoreboard</h1>
     <div class="scoreboard" id="scoreboard">
         <!-- Left section for the small images -->
         <div class="left-section" id="left-section"></div>
@@ -193,7 +193,8 @@
 
         // Fetch scores initially and every 5 seconds
         fetchScores();
-        setInterval(fetchScores, 500000000);
+        setInterval(fetchScores, 50000000);
     </script>
 </body>
 </html>
+

@@ -1,201 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
-            background-size: cover;
-            margin: 0 20px; /* Add margin */
-            padding: 0;
-            overflow: hidden; /* Prevent scrollbars */
+async function fetchScores() {
+    try {
+        const response = await fetch(sheetUrl);
+        const data = await response.text();
+
+        // Parse CSV and normalize data
+        const rows = data.replace(/\r/g, '').split('\n').map(row => {
+            return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
+        });
+
+        // Sort rows by score in descending order
+        const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[4]) - parseFloat(a[4]));
+
+        // Clear previous scoreboard
+        const leftSection = document.getElementById('left-section');
+        const rightSection = document.getElementById('right-section');
+        leftSection.innerHTML = '';
+        rightSection.innerHTML = '';
+
+        // Populate the large image section with the highest score
+        const [topContestant, ...remainingContestants] = sortedRows;
+
+        if (topContestant) {
+            const [contestant, , , , total, url] = topContestant;
+
+            const largeImageDiv = document.createElement('div');
+            largeImageDiv.className = 'large-image';
+
+            const largeImg = document.createElement('img');
+            largeImg.src = url;
+            largeImg.alt = contestant;
+            largeImg.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
+
+            const largeScore = document.createElement('div');
+            largeScore.className = 'large-score';
+            largeScore.textContent = total;
+
+            largeImageDiv.appendChild(largeImg);
+            largeImageDiv.appendChild(largeScore);
+
+            rightSection.appendChild(largeImageDiv);
         }
 
-        .scoreboard {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 140px;
-            padding-bottom: 20px;
-        }
+        // Split remaining contestants into two rows
+        const half = Math.ceil(remainingContestants.length / 2);
+        const topRow = remainingContestants.slice(0, half).reverse(); // Reverse order for the top row
+        const bottomRow = remainingContestants.slice(half).reverse(); // Reverse order for the bottom row
 
-        .left-section {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            width: 70%; /* Left section width */
-            gap: 100px 30px; /* Vertical gap: 100px, Horizontal gap: 30px */
-        }
+        // Helper function to create contestant divs
+        const createContestantDiv = (contestant, total, url) => {
+            const contestantDiv = document.createElement('div');
+            contestantDiv.className = 'contestant';
 
-        .right-section {
-            width: 28%; /* Right section width */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+            const img = document.createElement('img');
+            img.src = url;
+            img.alt = contestant;
+            img.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
 
-        .contestant {
-            width: 22%; /* Width for images in left section */
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+            const score = document.createElement('div');
+            score.className = 'score';
+            score.textContent = total;
 
-        .contestant img {
-            width: 100%;
-            height: auto;
-            object-fit: contain; /* Maintain aspect ratio */
-            position: relative;
-            transform: rotate(var(--rotate-angle)); /* Apply jaunty angles */
-        }
+            contestantDiv.appendChild(img);
+            contestantDiv.appendChild(score);
 
-        .score {
-            position: absolute;
-            bottom: -100px; /* Adjust score position */
-            left: 50%;
-            transform: translateX(-50%);
-            background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
-            background-size: contain;
-            color: white;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 37px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 140px;
-            height: 100px;
-            z-index: 2;
-        }
+            return contestantDiv;
+        };
 
-        .large-image {
-            position: relative;
-            width: 100%;
-        }
-
-        .large-image img {
-            width: 100%;
-            height: auto;
-            object-fit: contain;
-            transform: rotate(var(--rotate-angle)); /* Apply jaunty angle */
-        }
-
-        .large-score {
-            position: absolute;
-            bottom: -100px; /* Position score below large image */
-            left: 50%;
-            transform: translateX(-50%);
-            background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
-            background-size: contain;
-            color: white;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 40px;
-            font-weight: bold;
-            width: 140px;
-            height: 100px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-    </style>
-</head>
-<body>
-    <div class="scoreboard" id="scoreboard">
-        <!-- Left section for smaller images -->
-        <div class="left-section" id="left-section"></div>
-
-        <!-- Right section for the large image -->
-        <div class="right-section" id="right-section"></div>
-    </div>
-
-    <script>
-        const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
-
-        async function fetchScores() {
-            try {
-                const response = await fetch(sheetUrl);
-                const data = await response.text();
-
-                // Parse CSV and normalize data
-                const rows = data.replace(/\r/g, '').split('\n').map(row => {
-                    return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
-                });
-
-                // Sort rows by score in descending order
-                const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[4]) - parseFloat(a[4]));
-
-                // Clear previous scoreboard
-                const leftSection = document.getElementById('left-section');
-                const rightSection = document.getElementById('right-section');
-                leftSection.innerHTML = '';
-                rightSection.innerHTML = '';
-
-                // Populate the large image section with the highest score
-                const [topContestant, ...remainingContestants] = sortedRows;
-
-                if (topContestant) {
-                    const [contestant, , , , total, url] = topContestant;
-
-                    const largeImageDiv = document.createElement('div');
-                    largeImageDiv.className = 'large-image';
-
-                    const largeImg = document.createElement('img');
-                    largeImg.src = url;
-                    largeImg.alt = contestant;
-                    largeImg.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
-
-                    const largeScore = document.createElement('div');
-                    largeScore.className = 'large-score';
-                    largeScore.textContent = total;
-
-                    largeImageDiv.appendChild(largeImg);
-                    largeImageDiv.appendChild(largeScore);
-
-                    rightSection.appendChild(largeImageDiv);
-                }
-
-                // Populate the smaller images section with the remaining contestants
-                remainingContestants.forEach(row => {
-                    const [contestant, , , , total, url] = row;
-
-                    if (!contestant || !url || isNaN(total)) {
-                        console.warn('Skipping invalid row:', row);
-                        return;
-                    }
-
-                    const contestantDiv = document.createElement('div');
-                    contestantDiv.className = 'contestant';
-
-                    const img = document.createElement('img');
-                    img.src = url;
-                    img.alt = contestant;
-                    img.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
-
-                    const score = document.createElement('div');
-                    score.className = 'score';
-                    score.textContent = total;
-
-                    contestantDiv.appendChild(img);
-                    contestantDiv.appendChild(score);
-
-                    leftSection.appendChild(contestantDiv);
-                });
-            } catch (error) {
-                console.error('Error fetching data:', error);
-                alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');
+        // Add contestants to the left section in reversed order for each row
+        [...topRow, ...bottomRow].forEach(([contestant, , , , total, url]) => {
+            if (!contestant || !url || isNaN(total)) {
+                console.warn('Skipping invalid row:', row);
+                return;
             }
-        }
+            leftSection.appendChild(createContestantDiv(contestant, total, url));
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');
+    }
+}
 
-        // Fetch scores initially and refresh every 5 seconds
-        fetchScores();
-        setInterval(fetchScores, 5000);
-    </script>
-</body>
-</html>
 

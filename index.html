@@ -3,19 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard2</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-                background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
-    background-size: cover;
-            background-color: #f9f9f9;
-            margin: 0 20px; /* Add 10px margin to the left and right */
+            background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0 20px; /* Add margin */
             padding: 0;
-               overflow: hidden; /* Prevents scrollbars */
+            overflow: hidden; /* Prevent scrollbars */
         }
-
 
         .scoreboard {
             display: flex;
@@ -28,19 +26,19 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            width: 70%; /* Left side takes 70% of the width */
-            gap: 120px 30px; /* Vertical gap: 100px, Horizontal gap: 30px */
+            width: 70%; /* Left section width */
+            gap: 100px 30px; /* Vertical gap: 100px, Horizontal gap: 30px */
         }
 
         .right-section {
-            width: 28%; /* Right side takes 28% of the width */
+            width: 28%; /* Right section width */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         .contestant {
-            width: 22%; /* Make images occupy 22% of the width for 4 images per row */
+            width: 22%; /* Width for images in left section */
             position: relative;
             display: flex;
             flex-direction: column;
@@ -50,19 +48,19 @@
         .contestant img {
             width: 100%;
             height: auto;
-            object-fit: contain; /* Preserve aspect ratio */
+            object-fit: contain; /* Maintain aspect ratio */
             position: relative;
-            transform: rotate(var(--rotate-angle)); /* Apply the jaunty angle */
+            transform: rotate(var(--rotate-angle)); /* Apply jaunty angles */
         }
 
         .score {
             position: absolute;
-            bottom: -100px; /* Adjust position further below the image */
-            left: 50%; /* Start from the middle of the container */
-            transform: translateX(-50%); /* Center the score horizontally */
+            bottom: -100px; /* Adjust score position */
+            left: 50%;
+            transform: translateX(-50%);
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
-            color: white; /* Set score font color to white */
+            color: white;
             font-family: "Courier New", Courier, monospace;
             font-size: 37px;
             font-weight: bold;
@@ -71,7 +69,7 @@
             justify-content: center;
             width: 140px;
             height: 100px;
-            z-index: 2; /* Ensure the score appears in front of the seal */
+            z-index: 2;
         }
 
         .large-image {
@@ -83,17 +81,17 @@
             width: 100%;
             height: auto;
             object-fit: contain;
-            transform: rotate(var(--rotate-angle)); /* Apply jaunty angle to large image */
+            transform: rotate(var(--rotate-angle)); /* Apply jaunty angle */
         }
 
         .large-score {
             position: absolute;
-            top: calc(50% + 300px); /* Center vertically, slightly below middle */
-            left: 50%; /* Center horizontally */
-            transform: translate(-50%, -50%);
+            bottom: -100px; /* Position score below large image */
+            left: 50%;
+            transform: translateX(-50%);
             background: url('https://vodbox.github.io/tm-scoreboard/images/seal.png') no-repeat center center;
             background-size: contain;
-            color: white; /* Set score font color to white */
+            color: white;
             font-family: "Courier New", Courier, monospace;
             font-size: 40px;
             font-weight: bold;
@@ -102,13 +100,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2; /* Ensure the score is in front of the large seal */
+            z-index: 2;
         }
     </style>
 </head>
 <body>
     <div class="scoreboard" id="scoreboard">
-        <!-- Left section for the small images -->
+        <!-- Left section for smaller images -->
         <div class="left-section" id="left-section"></div>
 
         <!-- Right section for the large image -->
@@ -124,11 +122,13 @@
                 const response = await fetch(sheetUrl);
                 const data = await response.text();
 
-                // Ensure consistent line endings and split rows
+                // Parse CSV and normalize data
                 const rows = data.replace(/\r/g, '').split('\n').map(row => {
-                    // Use a safer CSV split to handle commas in data
                     return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
                 });
+
+                // Sort rows by score in descending order
+                const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[4]) - parseFloat(a[4]));
 
                 // Clear previous scoreboard
                 const leftSection = document.getElementById('left-section');
@@ -136,64 +136,55 @@
                 leftSection.innerHTML = '';
                 rightSection.innerHTML = '';
 
-                // Populate the scoreboard
-                rows.slice(1).forEach((row, index) => {
-                    const [contestant, task1, task2, task3, total, url] = row;
+                // Populate the large image section with the highest score
+                const [topContestant, ...remainingContestants] = sortedRows;
 
-                    // Validate data to avoid unexpected issues
+                if (topContestant) {
+                    const [contestant, , , , total, url] = topContestant;
+
+                    const largeImageDiv = document.createElement('div');
+                    largeImageDiv.className = 'large-image';
+
+                    const largeImg = document.createElement('img');
+                    largeImg.src = url;
+                    largeImg.alt = contestant;
+                    largeImg.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
+
+                    const largeScore = document.createElement('div');
+                    largeScore.className = 'large-score';
+                    largeScore.textContent = total;
+
+                    largeImageDiv.appendChild(largeImg);
+                    largeImageDiv.appendChild(largeScore);
+
+                    rightSection.appendChild(largeImageDiv);
+                }
+
+                // Populate the smaller images section with the remaining contestants
+                remainingContestants.forEach(row => {
+                    const [contestant, , , , total, url] = row;
+
                     if (!contestant || !url || isNaN(total)) {
                         console.warn('Skipping invalid row:', row);
                         return;
                     }
 
-                    // Create contestant card
                     const contestantDiv = document.createElement('div');
                     contestantDiv.className = 'contestant';
 
-                    // Contestant image
                     const img = document.createElement('img');
                     img.src = url;
                     img.alt = contestant;
-
-                    // Apply a random jaunty angle
                     img.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
 
-                    // Score circle (using seal image as background)
                     const score = document.createElement('div');
                     score.className = 'score';
                     score.textContent = total;
 
-                    // Append to contestant div
                     contestantDiv.appendChild(img);
                     contestantDiv.appendChild(score);
 
-                    if (index < 8) {
-                        // Add the small images to the left section
-                        leftSection.appendChild(contestantDiv);
-                    } else {
-                        // Add the large image to the right section (only 1 large image)
-                        const largeImageDiv = document.createElement('div');
-                        largeImageDiv.className = 'large-image';
-
-                        // Large image
-                        const largeImg = document.createElement('img');
-                        largeImg.src = url;
-                        largeImg.alt = contestant;
-
-                        // Apply jaunty angle to large image
-                        largeImg.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
-
-                        // Large score circle (behind the image)
-                        const largeScore = document.createElement('div');
-                        largeScore.className = 'large-score';
-                        largeScore.textContent = total;
-
-                        // Append to large image div
-                        largeImageDiv.appendChild(largeImg);
-                        largeImageDiv.appendChild(largeScore);
-
-                        rightSection.appendChild(largeImageDiv);
-                    }
+                    leftSection.appendChild(contestantDiv);
                 });
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -201,9 +192,10 @@
             }
         }
 
-        // Fetch scores initially and every 5 seconds
+        // Fetch scores initially and refresh every 5 seconds
         fetchScores();
-        setInterval(fetchScores, 5000000);
+        setInterval(fetchScores, 5000);
     </script>
 </body>
 </html>
+

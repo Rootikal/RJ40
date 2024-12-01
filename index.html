@@ -37,8 +37,8 @@
 
                 const data = await response.text();
 
-                // Strip Google wrapper and parse the JSON
-                const jsonString = data.replace(/^.*google\.visualization\.Query\.setResponse\(|\);?$/g, '');
+                // Extract the JSON content from the response
+                const jsonString = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/)[1];
                 const jsonData = JSON.parse(jsonString);
 
                 // Extract the URL from the first row, column C

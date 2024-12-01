@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sDynamic Iframe</title>
+    <title>aaaDynamic Iframe from Google Sheet</title>
     <style>
-        /* Ensure full-screen layout */
         body, html {
             margin: 0;
             padding: 0;
@@ -21,36 +20,33 @@
     </style>
 </head>
 <body>
-    <!-- Fullscreen iframe -->
-    <iframe id="dynamic-iframe"></iframe>
+    <!-- Iframe for displaying the URL -->
+    <iframe id="dynamic-iframe" src=""></iframe>
 
     <script>
-        async function updateIframe() {
-            // Google Sheets API URL
-            const queryUrl = 'https://docs.google.com/spreadsheets/d/1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU/gviz/tq?tq=SELECT%20C%20LIMIT%201&sheet=Scores';
+        const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tq=SELECT%20C%20LIMIT%201&sheet=Scores`;
 
+        async function updateIframe() {
             try {
-                console.log('Fetching URL:', queryUrl);
-                const response = await fetch(queryUrl);
+                const response = await fetch(sheetUrl);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.text();
-                console.log('Raw data:', data);
 
-                // Strip the wrapper around the JSON
+                // Parse the returned data to extract JSON
                 const jsonString = data.replace(/^.*google\.visualization\.Query\.setResponse\(|\);?$/g, '');
                 const jsonData = JSON.parse(jsonString);
-                console.log('Parsed JSON:', jsonData);
 
                 // Extract the URL from cell C1
                 const url = jsonData.table.rows[0]?.c[0]?.v;
+
                 if (url) {
                     const iframe = document.getElementById('dynamic-iframe');
-                    iframe.src = url; // Update iframe source
-                    console.log('Updated iframe source to:', url);
+                    iframe.src = url; // Set the iframe source to the URL
                 } else {
                     console.error('Cell C1 is empty or invalid.');
                     alert('Cell C1 is empty or contains an invalid URL.');
@@ -61,9 +57,9 @@
             }
         }
 
-        // Fetch the iframe URL initially and refresh it every 10 seconds
+        // Fetch and update iframe initially, then every 10 seconds
         updateIframe();
-        setInterval(updateIframe, 10000); // Refresh every 10 seconds
+        setInterval(updateIframe, 10000);
     </script>
 </body>
 </html>

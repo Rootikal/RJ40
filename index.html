@@ -3,55 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2Dynamic Iframe Display</title>
+    <title>Dynamic Iframe</title>
     <style>
-        body {
+        /* Ensure full-screen layout */
+        body, html {
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevents scrollbars */
+            height: 100%;
+            overflow: hidden;
         }
 
         iframe {
             border: none;
             width: 100%;
-            height: 100vh; /* Full viewport height */
+            height: 100%;
         }
     </style>
 </head>
 <body>
-    <iframe id="dynamic-iframe" src=""></iframe>
+    <!-- Fullscreen iframe -->
+    <iframe id="dynamic-iframe"></iframe>
 
     <script>
-        const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
-        const sheetName = 'Scores'; // Name of the worksheet
-        const queryUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tq=SELECT%20C%20LIMIT%201&sheet=${sheetName}`;
-
         async function updateIframe() {
+            // Google Sheets API URL
+            const queryUrl = 'https://docs.google.com/spreadsheets/d/1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU/gviz/tq?tq=SELECT%20C%20LIMIT%201&sheet=Scores';
+
             try {
+                console.log('Fetching URL:', queryUrl);
                 const response = await fetch(queryUrl);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.text();
+                console.log('Raw data:', data);
 
-                // Extract the URL from the returned data (JSON-like response)
-                const jsonData = JSON.parse(data.replace('/*O_o*/', '').replace(/(^google\.visualization\.Query\.setResponse\(|\);$)/g, ''));
-                const url = jsonData.table.rows[0].c[0].v; // Get the value from cell C1
+                // Parse the Visualization API response
+                const jsonData = JSON.parse(
+                    data.replace('/*O_o*/', '').replace(/(^google\.visualization\.Query\.setResponse\(|\);$)/g, '')
+                );
+                console.log('Parsed JSON:', jsonData);
 
+                // Extract the URL from cell C1
+                const url = jsonData.table.rows[0]?.c[0]?.v;
                 if (url) {
                     const iframe = document.getElementById('dynamic-iframe');
                     iframe.src = url; // Update iframe source
+                    console.log('Updated iframe source to:', url);
                 } else {
-                    console.error('URL in cell C1 is empty or invalid.');
+                    console.error('Cell C1 is empty or invalid.');
+                    alert('Cell C1 is empty or contains an invalid URL.');
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                console.error('Error fetching the iframe URL:', error);
                 alert('Failed to fetch the iframe URL. Please check your sheet permissions and try again.');
             }
         }
 
-        // Initial load
+        // Fetch the iframe URL initially and refresh it every 10 seconds
         updateIframe();
-
-        // Optionally, refresh iframe every 10 seconds
-        setInterval(updateIframe, 10000);
+        setInterval(updateIframe, 10000); // Refresh every 10 seconds
     </script>
 </body>
 </html>

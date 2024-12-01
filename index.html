@@ -27,6 +27,8 @@
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tq=SELECT%20C%20LIMIT%201&sheet=Scores`;
 
+        let previousUrl = null; // To store the last URL fetched
+
         async function updateIframe() {
             try {
                 const response = await fetch(sheetUrl);
@@ -45,9 +47,12 @@
                 const url = jsonData.table.rows[0]?.c[0]?.v;
 
                 if (url) {
-                    // Set the iframe's src to the extracted URL
-                    const iframe = document.getElementById('dynamic-iframe');
-                    iframe.src = url;
+                    if (url !== previousUrl) {
+                        // Only update if the value has changed
+                        const iframe = document.getElementById('dynamic-iframe');
+                        iframe.src = url;
+                        previousUrl = url; // Update the stored URL
+                    }
                 } else {
                     console.error('Cell C1 is empty or contains an invalid URL.');
                     alert('Cell C1 is empty or contains an invalid URL.');
@@ -60,7 +65,7 @@
 
         // Fetch and update the iframe initially and periodically
         updateIframe();
-        setInterval(updateIframe, 10000);
+        setInterval(updateIframe, 10000); // Check every 10 seconds
     </script>
 </body>
 </html>

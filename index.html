@@ -23,17 +23,17 @@
 
     <script>
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
-        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+        const sheetName = 'Scores'; // Name of the worksheet
+        const queryUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tq=SELECT%20C%20LIMIT%201&sheet=${sheetName}`;
 
         async function updateIframe() {
             try {
-                const response = await fetch(sheetUrl);
+                const response = await fetch(queryUrl);
                 const data = await response.text();
 
-                // Parse CSV and extract cell C1 (row 1, column 3)
-                const rows = data.replace(/\r/g, '').split('\n');
-                const firstRow = rows[0].split(',');
-                const url = firstRow[2].replace(/(^"|"$)/g, '').trim(); // Column 3 (C1)
+                // Extract the URL from the returned data (JSON-like response)
+                const jsonData = JSON.parse(data.replace('/*O_o*/', '').replace(/(^google\.visualization\.Query\.setResponse\(|\);$)/g, ''));
+                const url = jsonData.table.rows[0].c[0].v; // Get the value from cell C1
 
                 if (url) {
                     const iframe = document.getElementById('dynamic-iframe');
@@ -51,7 +51,7 @@
         updateIframe();
 
         // Optionally, refresh iframe every 10 seconds
-        setInterval(updateIframe, 5000);
+        setInterval(updateIframe, 10000);
     </script>
 </body>
 </html>

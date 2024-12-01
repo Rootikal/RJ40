@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>aaaDynamic Iframe from Google Sheet</title>
+    <title>Dynamic Iframe from Google Sheet</title>
     <style>
         body, html {
             margin: 0;
@@ -37,18 +37,19 @@
 
                 const data = await response.text();
 
-                // Parse the returned data to extract JSON
+                // Strip Google wrapper and parse the JSON
                 const jsonString = data.replace(/^.*google\.visualization\.Query\.setResponse\(|\);?$/g, '');
                 const jsonData = JSON.parse(jsonString);
 
-                // Extract the URL from cell C1
+                // Extract the URL from the first row, column C
                 const url = jsonData.table.rows[0]?.c[0]?.v;
 
                 if (url) {
+                    // Set the iframe's src to the extracted URL
                     const iframe = document.getElementById('dynamic-iframe');
-                    iframe.src = url; // Set the iframe source to the URL
+                    iframe.src = url;
                 } else {
-                    console.error('Cell C1 is empty or invalid.');
+                    console.error('Cell C1 is empty or contains an invalid URL.');
                     alert('Cell C1 is empty or contains an invalid URL.');
                 }
             } catch (error) {
@@ -57,7 +58,7 @@
             }
         }
 
-        // Fetch and update iframe initially, then every 10 seconds
+        // Fetch and update the iframe initially and periodically
         updateIframe();
         setInterval(updateIframe, 10000);
     </script>

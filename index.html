@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Iframe</title>
+    <title>sDynamic Iframe</title>
     <style>
         /* Ensure full-screen layout */
         body, html {
@@ -40,10 +40,9 @@
                 const data = await response.text();
                 console.log('Raw data:', data);
 
-                // Parse the Visualization API response
-                const jsonData = JSON.parse(
-                    data.replace('/*O_o*/', '').replace(/(^google\.visualization\.Query\.setResponse\(|\);$)/g, '')
-                );
+                // Strip the wrapper around the JSON
+                const jsonString = data.replace(/^.*google\.visualization\.Query\.setResponse\(|\);?$/g, '');
+                const jsonData = JSON.parse(jsonString);
                 console.log('Parsed JSON:', jsonData);
 
                 // Extract the URL from cell C1

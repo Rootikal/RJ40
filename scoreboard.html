@@ -117,7 +117,7 @@
 
     <script>
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
-        const sheetUrl = https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv;
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
 
         async function fetchScores() {
             try {
@@ -150,7 +150,7 @@
                     const largeImg = document.createElement('img');
                     largeImg.src = url;
                     largeImg.alt = contestant;
-                    largeImg.style.setProperty('--rotate-angle', ${Math.random() * 10 - 5}deg);
+                    largeImg.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
 
                     const largeScore = document.createElement('div');
                     largeScore.className = 'large-score';
@@ -175,7 +175,7 @@
                     const img = document.createElement('img');
                     img.src = url;
                     img.alt = contestant;
-                    img.style.setProperty('--rotate-angle', ${Math.random() * 10 - 5}deg);
+                    img.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
 
                     const score = document.createElement('div');
                     score.className = 'score';

@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rTaskmaster Scoreboard</title>
+    <title>7Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
             background-size: cover;
-            background-size: 100% calc(100% + 20px); /* Stretch the height to fill the gap caused by the upward shift */
-            background-position: center top; /* Keeps the alignment */
+        background-size: 100% calc(100% + 20px); /* Stretch the height to fill the gap caused by the upward shift */
+               background-position: center top; /* Keeps the alignment */
             margin: 0 10px;
             padding: 0;
             overflow: hidden; /* Prevents scrollbars */
@@ -45,14 +45,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            opacity: 0; /* Initially hidden */
-            transform: translateY(20px); /* Start slightly offset */
-            transition: opacity 0.5s ease, transform 0.5s ease; /* Fade and slide in */
-        }
-
-        .contestant.fade-in {
-            opacity: 1; /* Fully visible */
-            transform: translateY(0); /* Reset position */
         }
 
         .contestant img {
@@ -85,14 +77,13 @@
         .large-image {
             position: relative;
             width: 100%;
-            opacity: 0; /* Initially hidden */
-            transform: translateY(20px); /* Start slightly offset */
-            transition: opacity 0.5s ease, transform 0.5s ease; /* Fade and slide in */
         }
 
-        .large-image.fade-in {
-            opacity: 1; /* Fully visible */
-            transform: translateY(0); /* Reset position */
+        .large-image img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            transform: rotate(var(--rotate-angle)); /* Apply jaunty angle to large image */
         }
 
         .large-score {
@@ -169,10 +160,12 @@
                     largeImageDiv.appendChild(largeScore);
 
                     rightSection.appendChild(largeImageDiv);
-
-                    // Trigger fade-in effect
-                    requestAnimationFrame(() => largeImageDiv.classList.add('fade-in'));
                 }
+
+                // Split remaining contestants into two rows
+                const half = Math.ceil(remainingContestants.length / 2);
+                const topRow = remainingContestants.slice(0, half).reverse(); // Reverse order for the top row
+                const bottomRow = remainingContestants.slice(half).reverse(); // Reverse order for the bottom row
 
                 // Helper function to create contestant divs
                 const createContestantDiv = (contestant, total, url) => {
@@ -191,15 +184,15 @@
                     contestantDiv.appendChild(img);
                     contestantDiv.appendChild(score);
 
-                    // Trigger fade-in effect
-                    requestAnimationFrame(() => contestantDiv.classList.add('fade-in'));
-
                     return contestantDiv;
                 };
 
-                // Add contestants to the left section
-                remainingContestants.forEach(([contestant, , , , total, url]) => {
-                    if (!contestant || !url || isNaN(total)) return;
+                // Add contestants to the left section in reversed order for each row
+                [...topRow, ...bottomRow].forEach(([contestant, , , , total, url]) => {
+                    if (!contestant || !url || isNaN(total)) {
+                        console.warn('Skipping invalid row:', row);
+                        return;
+                    }
                     leftSection.appendChild(createContestantDiv(contestant, total, url));
                 });
             } catch (error) {

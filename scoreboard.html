@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1Taskmaster Scoreboard</title>
+    <title>7Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
             background-size: cover;
-        background-size: 100% calc(100% + 20px); /* Stretch the height to fill the gap caused by the upward shift */
-               background-position: center top; /* Keeps the alignment */
+            background-size: 100% calc(100% + 20px); /* Stretch the height to fill the gap caused by the upward shift */
+            background-position: center top; /* Keeps the alignment */
             margin: 0 10px;
             padding: 0;
             overflow: hidden; /* Prevents scrollbars */
@@ -130,7 +130,7 @@
                 });
 
                 // Sort rows by score in descending order
-                const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[1]) - parseFloat(a[1]));
+                const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[4]) - parseFloat(a[4]));
 
                 // Clear previous scoreboard
                 const leftSection = document.getElementById('left-section');
@@ -142,7 +142,7 @@
                 const [topContestant, ...remainingContestants] = sortedRows;
 
                 if (topContestant) {
-                    const [contestant, , , , total, url] = topContestant;
+                    const [contestant, , , , total, , , , , , , , , , , , , , , url] = topContestant; // Column T is index 19
 
                     const largeImageDiv = document.createElement('div');
                     largeImageDiv.className = 'large-image';
@@ -188,7 +188,7 @@
                 };
 
                 // Add contestants to the left section in reversed order for each row
-                [...topRow, ...bottomRow].forEach(([contestant, , , , total, url]) => {
+                [...topRow, ...bottomRow].forEach(([contestant, , , , total, , , , , , , , , , , , , , , url]) => {
                     if (!contestant || !url || isNaN(total)) {
                         console.warn('Skipping invalid row:', row);
                         return;

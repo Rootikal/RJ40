@@ -130,7 +130,7 @@
                 });
 
                 // Sort rows by score in descending order
-                const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[4]) - parseFloat(a[4]));
+                const sortedRows = rows.slice(1).sort((a, b) => parseFloat(b[18]) - parseFloat(a[18])); // Column S is index 18
 
                 // Clear previous scoreboard
                 const leftSection = document.getElementById('left-section');
@@ -142,7 +142,7 @@
                 const [topContestant, ...remainingContestants] = sortedRows;
 
                 if (topContestant) {
-                    const [contestant, , , , total, , , , , , , , , , , , , , , url] = topContestant; // Column T is index 19
+                    const [contestant, , , , , , , , , , , , , , , , , , total, url] = topContestant; // Column S = index 18, Column T = index 19
 
                     const largeImageDiv = document.createElement('div');
                     largeImageDiv.className = 'large-image';
@@ -188,7 +188,7 @@
                 };
 
                 // Add contestants to the left section in reversed order for each row
-                [...topRow, ...bottomRow].forEach(([contestant, , , , total, , , , , , , , , , , , , , , url]) => {
+                [...topRow, ...bottomRow].forEach(([contestant, , , , , , , , , , , , , , , , , , total, url]) => {
                     if (!contestant || !url || isNaN(total)) {
                         console.warn('Skipping invalid row:', row);
                         return;

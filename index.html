@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Croes Vaen Taskmaster</title>
+    <title>2Croes Vaen Taskmaster</title>
     <style>
         body, html {
             margin: 0;
@@ -25,7 +25,7 @@
 
     <script>
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
-        // Querying the "Scoreboard" sheet for cell B1
+        // Query to get data from the sheet
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tq=SELECT%20B%20LIMIT%201&sheet=Scoreboard`;
 
         let previousUrl = null; // To store the last URL fetched
@@ -40,23 +40,26 @@
 
                 const data = await response.text();
 
-                // Extract the JSON content from the response
+                // Extract the JSON content from the response using regex
                 const jsonString = data.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/)[1];
                 const jsonData = JSON.parse(jsonString);
 
-                // Extract the URL from the first row, column B
-                const url = jsonData.table.rows[0]?.c[0]?.v;
+                // Extract the URL from the "label" field in "cols"
+                const label = jsonData.table.cols[0]?.label;
 
-                if (url) {
+                if (label) {
+                    // Extract the URL from the label (remove any extra text)
+                    const url = label.split(' ')[0]; // Extract the first part before any space
+
                     if (url !== previousUrl) {
-                        // Only update if the value has changed
+                        // Update iframe if the URL has changed
                         const iframe = document.getElementById('dynamic-iframe');
                         iframe.src = url;
                         previousUrl = url; // Update the stored URL
                     }
                 } else {
-                    console.error('Cell B1 is empty or contains an invalid URL.');
-                    alert('Cell B1 is empty or contains an invalid URL.');
+                    console.error('No valid label found in the response.');
+                    alert('No valid label found in the response.');
                 }
             } catch (error) {
                 console.error('Error fetching the iframe URL:', error);

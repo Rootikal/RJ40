@@ -126,10 +126,10 @@
                     return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
                 });
 
-                // Process rows 4 to 12 (adjust for two extra header rows)
+                // Only include rows 4 to 12 (index 3 to 11)
                 const relevantRows = rows.slice(3, 12);
 
-                // Sort rows by score in descending order (Column S = index 18)
+                // Sort rows by score in descending order (column S = index 18)
                 const sortedRows = relevantRows.sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
 
                 // Clear previous scoreboard
@@ -201,6 +201,7 @@
             }
         }
 
+        // Fetch scores initially and every 5 seconds
         fetchScores();
         setInterval(fetchScores, 5000);
     </script>

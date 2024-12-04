@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard</title>
+    <title>7Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -121,21 +121,24 @@
                 const response = await fetch(sheetUrl);
                 const data = await response.text();
 
+                // Parse CSV and normalize data
                 const rows = data.replace(/\r/g, '').split('\n').map(row => {
                     return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
                 });
 
-                // Extract rows 4 through 12
+                // Process rows 4 to 12 (adjust for two extra header rows)
                 const relevantRows = rows.slice(3, 12);
 
-                // Sort rows by totals in descending order (column S, index 18)
+                // Sort rows by score in descending order (Column S = index 18)
                 const sortedRows = relevantRows.sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
 
+                // Clear previous scoreboard
                 const leftSection = document.getElementById('left-section');
                 const rightSection = document.getElementById('right-section');
                 leftSection.innerHTML = '';
                 rightSection.innerHTML = '';
 
+                // Populate the large image section with the highest score
                 const [topContestant, ...remainingContestants] = sortedRows;
 
                 if (topContestant) {
@@ -159,10 +162,12 @@
                     rightSection.appendChild(largeImageDiv);
                 }
 
+                // Split remaining contestants into two rows
                 const half = Math.ceil(remainingContestants.length / 2);
                 const topRow = remainingContestants.slice(0, half).reverse();
                 const bottomRow = remainingContestants.slice(half).reverse();
 
+                // Helper function to create contestant divs
                 const createContestantDiv = (contestant, total, url) => {
                     const contestantDiv = document.createElement('div');
                     contestantDiv.className = 'contestant';
@@ -182,6 +187,7 @@
                     return contestantDiv;
                 };
 
+                // Add contestants to the left section
                 [...topRow, ...bottomRow].forEach(([contestant, , , , , , , , , , , , , , , , , , total, url]) => {
                     if (!contestant || !url || isNaN(total)) {
                         console.warn('Skipping invalid row:', row);

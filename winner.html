@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskmaster Winner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
+            background-size: cover;
+            background-size: 100% calc(100% + 20px);
+            background-position: center top;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .winner-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .winner-image {
+            max-width: 50%;
+            height: auto;
+            object-fit: contain;
+            transform: rotate(var(--rotate-angle)); /* Apply a random jaunty angle */
+        }
+
+        .winner-text {
+            margin-top: 20px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 30px;
+            font-weight: bold;
+            color: white;
+            background-color: red;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="winner-container" id="winner-container">
+        <!-- The winner's image and title will be inserted here -->
+    </div>
+
+    <script>
+        const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
+        const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
+
+        async function fetchWinner() {
+            try {
+                const response = await fetch(sheetUrl);
+                const

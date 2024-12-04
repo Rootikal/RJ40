@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1Taskmaster Scoreboard</title>
+    <title>Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,7 +125,11 @@
                     return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
                 });
 
-                const sortedRows = rows.slice(3).sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
+                // Extract rows 4 through 12
+                const relevantRows = rows.slice(3, 12);
+
+                // Sort rows by totals in descending order (column S, index 18)
+                const sortedRows = relevantRows.sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
 
                 const leftSection = document.getElementById('left-section');
                 const rightSection = document.getElementById('right-section');

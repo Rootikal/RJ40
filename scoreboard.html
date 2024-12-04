@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>7Taskmaster Scoreboard</title>
+    <title>1Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,7 +125,7 @@
                     return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
                 });
 
-                const sortedRows = rows.slice(3).filter(row => row.length >= 20).sort((a, b) => parseFloat(b[18]) - parseFloat(a[18])); // Column S is index 18
+                const sortedRows = rows.slice(3).sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
 
                 const leftSection = document.getElementById('left-section');
                 const rightSection = document.getElementById('right-section');
@@ -155,9 +155,11 @@
                     rightSection.appendChild(largeImageDiv);
                 }
 
-                remainingContestants.forEach(([contestant, , , , , , , , , , , , , , , , , , total, url]) => {
-                    if (!contestant || !url || isNaN(total)) return;
+                const half = Math.ceil(remainingContestants.length / 2);
+                const topRow = remainingContestants.slice(0, half).reverse();
+                const bottomRow = remainingContestants.slice(half).reverse();
 
+                const createContestantDiv = (contestant, total, url) => {
                     const contestantDiv = document.createElement('div');
                     contestantDiv.className = 'contestant';
 
@@ -173,7 +175,15 @@
                     contestantDiv.appendChild(img);
                     contestantDiv.appendChild(score);
 
-                    leftSection.appendChild(contestantDiv);
+                    return contestantDiv;
+                };
+
+                [...topRow, ...bottomRow].forEach(([contestant, , , , , , , , , , , , , , , , , , total, url]) => {
+                    if (!contestant || !url || isNaN(total)) {
+                        console.warn('Skipping invalid row:', row);
+                        return;
+                    }
+                    leftSection.appendChild(createContestantDiv(contestant, total, url));
                 });
             } catch (error) {
                 console.error('Error fetching data:', error);

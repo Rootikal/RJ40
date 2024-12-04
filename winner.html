@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Winner</title>
+    <title>1Taskmaster Winner</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
-            background-size: cover;
             margin: 0;
             padding: 0;
             overflow: hidden;
+            background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
+            background-size: cover;
         }
 
         .winner-container {
@@ -44,7 +44,6 @@
             z-index: 2;
         }
 
-        /* Ensure fireworks canvas covers the entire page */
         #fireworks-canvas {
             position: absolute;
             top: 0;
@@ -62,6 +61,7 @@
         <!-- The winner's image and title will be inserted here -->
     </div>
 
+    <!-- Load Fireworks.js Library -->
     <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.0.1/dist/fireworks.min.js"></script>
 
     <script>
@@ -82,7 +82,7 @@
             delay: 25,  // Delay between firework launches
         });
 
-        // Fetch winner's image
+        // Fetch winner's image from Google Sheets
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
 
@@ -99,17 +99,11 @@
                     return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
                 });
 
-                console.log('Fetched rows:', rows); // Debug: Log all rows
-
                 // Only include rows 4 to 12 (index 3 to 11)
                 const relevantRows = rows.slice(3, 12);
 
-                console.log('Relevant rows (4 to 12):', relevantRows); // Debug: Log relevant rows
-
                 // Sort rows by score in descending order (column S = index 18)
                 const sortedRows = relevantRows.sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
-
-                console.log('Sorted rows:', sortedRows); // Debug: Log sorted rows
 
                 // Get the top contestant
                 const [topContestant] = sortedRows;
@@ -119,8 +113,6 @@
                 }
 
                 const [contestant, , , , , , , , , , , , , , , , , , total, url] = topContestant;
-
-                console.log('Top contestant:', { contestant, total, url }); // Debug: Log the top contestant
 
                 if (!url) {
                     throw new Error('Winner image URL is missing.');

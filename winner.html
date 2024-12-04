@@ -10,8 +10,6 @@
             text-align: center;
             background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
             background-size: cover;
-            background-size: 100% calc(100% + 20px);
-            background-position: center top;
             margin: 0;
             padding: 0;
             overflow: hidden;
@@ -56,4 +54,65 @@
         async function fetchWinner() {
             try {
                 const response = await fetch(sheetUrl);
-                const
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch data: ${response.status} ${response.statusText}`);
+                }
+                const data = await response.text();
+
+                // Parse CSV and normalize data
+                const rows = data.replace(/\r/g, '').split('\n').map(row => {
+                    return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g).map(cell => cell.replace(/(^"|"$)/g, '').trim());
+                });
+
+                console.log('Fetched rows:', rows); // Debug: Log all rows
+
+                // Only include rows 4 to 12 (index 3 to 11)
+                const relevantRows = rows.slice(3, 12);
+
+                console.log('Relevant rows (4 to 12):', relevantRows); // Debug: Log relevant rows
+
+                // Sort rows by score in descending order (column S = index 18)
+                const sortedRows = relevantRows.sort((a, b) => parseFloat(b[18]) - parseFloat(a[18]));
+
+                console.log('Sorted rows:', sortedRows); // Debug: Log sorted rows
+
+                // Get the top contestant
+                const [topContestant] = sortedRows;
+
+                if (!topContestant || topContestant.length < 19) {
+                    throw new Error('Top contestant data is incomplete.');
+                }
+
+                const [contestant, , , , , , , , , , , , , , , , , , total, url] = topContestant;
+
+                console.log('Top contestant:', { contestant, total, url }); // Debug: Log the top contestant
+
+                if (!url) {
+                    throw new Error('Winner image URL is missing.');
+                }
+
+                const winnerContainer = document.getElementById('winner-container');
+
+                const img = document.createElement('img');
+                img.src = url;
+                img.alt = contestant || 'Winner';
+                img.className = 'winner-image';
+                img.style.setProperty('--rotate-angle', `${Math.random() * 10 - 5}deg`);
+
+                const winnerText = document.createElement('div');
+                winnerText.className = 'winner-text';
+                winnerText.textContent = 'Croes Vaen Taskmaster Winner';
+
+                winnerContainer.appendChild(img);
+                winnerContainer.appendChild(winnerText);
+            } catch (error) {
+                console.error('Error processing winner data:', error);
+                alert('Failed to display the winner. Check the console for details.');
+            }
+        }
+
+        // Fetch the winner initially
+        fetchWinner();
+    </script>
+</body>
+</html>

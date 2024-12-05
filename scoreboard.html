@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taskmaster Scoreboard</title>
+    <title>1Taskmaster Scoreboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,6 @@
             margin: 0 10px;
             padding: 0;
             overflow: hidden;
-            opacity: 1;  /* Background is visible by default */
         }
 
         .scoreboard {
@@ -23,12 +22,12 @@
             justify-content: space-between;
             margin-top: 10px;
             padding-bottom: 20px;
-            opacity: 0;  /* Initially hide scoreboard */
+            opacity: 0;  /* Initially hidden */
             transition: opacity 1s ease-in-out;  /* Fade-in effect */
         }
 
         .left-section, .right-section {
-            opacity: 0;  /* Initially hide sections */
+            opacity: 0;  /* Initially hidden */
             transition: opacity 1s ease-in-out 0.5s;  /* Fade-in with delay */
         }
 
@@ -98,11 +97,10 @@
             z-index: 2;
         }
 
-        /* This class will be added after the page loads to trigger the fade-in */
+        /* This class will trigger the fade-in effect */
         .fade-in {
             opacity: 1 !important;
         }
-
     </style>
 </head>
 <body>
@@ -195,12 +193,12 @@
                     leftSection.appendChild(createContestantDiv(contestant, total, url));
                 });
 
-                // Trigger fade-in after 1 second delay
+                // Trigger fade-in after content is populated
                 setTimeout(() => {
                     document.querySelectorAll('.scoreboard, .left-section, .right-section').forEach(element => {
                         element.classList.add('fade-in');
                     });
-                }, 100);  // Allow background to load first
+                }, 100);  // Small delay to ensure the content has loaded
             } catch (error) {
                 console.error('Error fetching data:', error);
                 alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');

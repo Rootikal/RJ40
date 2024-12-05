@@ -22,13 +22,27 @@
             justify-content: space-between;
             margin-top: 10px;
             padding-bottom: 20px;
-            opacity: 0;  /* Initially hidden */
-            transition: opacity 1s ease-in-out;  /* Fade-in effect */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1s ease-in-out; /* Fade-in transition */
         }
 
-        .left-section, .right-section {
-            opacity: 0;  /* Initially hidden */
-            transition: opacity 1s ease-in-out 0.5s;  /* Fade-in with delay */
+        .left-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 70%;
+            gap: 110px 10px;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1s ease-in-out 0.5s; /* Fade-in with delay */
+        }
+
+        .right-section {
+            width: 27%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; /* Initially hidden */
+            transition: opacity 1s ease-in-out 0.5s; /* Fade-in with delay */
         }
 
         .contestant {
@@ -95,11 +109,6 @@
             align-items: center;
             justify-content: center;
             z-index: 2;
-        }
-
-        /* This class will trigger the fade-in effect */
-        .fade-in {
-            opacity: 1 !important;
         }
     </style>
 </head>
@@ -193,12 +202,13 @@
                     leftSection.appendChild(createContestantDiv(contestant, total, url));
                 });
 
-                // Trigger fade-in after content is populated
+                // Trigger the fade-in effect
                 setTimeout(() => {
-                    document.querySelectorAll('.scoreboard, .left-section, .right-section').forEach(element => {
-                        element.classList.add('fade-in');
-                    });
-                }, 100);  // Small delay to ensure the content has loaded
+                    document.querySelector('.scoreboard').style.opacity = '1';  // Fade-in the entire scoreboard
+                    document.querySelector('.left-section').style.opacity = '1';  // Fade-in the left section
+                    document.querySelector('.right-section').style.opacity = '1';  // Fade-in the right section
+                }, 100); // Delay to ensure content is loaded first
+
             } catch (error) {
                 console.error('Error fetching data:', error);
                 alert('Failed to fetch scoreboard data. Please check your sheet permissions and try again.');

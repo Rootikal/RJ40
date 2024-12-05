@@ -11,8 +11,8 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: url('https://i.redd.it/j6txbzpljuj61.png') no-repeat center center fixed;
-            background-size: cover;
+            background: url('https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDFnZWt5NGJwbXN2bTFqYmFvM2lrMmxjcDdqMWl5bDA0aHB6dzBsOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/c1R3XcUXVWAFy/giphy.webp') no-repeat center center fixed; /* Your Fireworks GIF */
+            background-size: cover; /* Ensure the GIF covers the entire screen */
         }
 
         .winner-container {
@@ -26,7 +26,7 @@
         }
 
         .winner-image {
-            max-width: 40%; /* Reduced from 50% to 40% for a smaller size */
+            max-width: 40%; /* Adjust the size of the image */
             height: auto;
             object-fit: contain;
             transform: rotate(var(--rotate-angle)); /* Apply a random jaunty angle */
@@ -44,44 +44,15 @@
             z-index: 2;
         }
 
-        #fireworks-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none; /* Allow interactions with elements above the canvas */
-        }
+        /* Canvas is no longer needed with GIF background */
     </style>
 </head>
 <body>
-    <canvas id="fireworks-canvas"></canvas>
     <div class="winner-container" id="winner-container">
         <!-- The winner's image and title will be inserted here -->
     </div>
 
-    <!-- Load Fireworks.js Library (Updated CDN) -->
-    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.0.1/dist/fireworks.min.js"></script>
-
     <script>
-        // Initialize fireworks animation
-        const fireworks = new Fireworks({
-            selector: '#fireworks-canvas',
-            maxRockets: 5,  // Max rockets at once
-            rocketSpawnInterval: 150,  // Interval between rockets
-            numParticles: 100,  // Number of particles per firework
-            explosionMinHeight: 0.2,  // Minimum height of explosion
-            explosionMaxHeight: 0.9,  // Maximum height of explosion
-            hue: 120,  // Color hue of the fireworks
-            speed: 10,  // Speed of the fireworks
-            friction: 0.95,  // Friction of particles
-            gravity: 1.2,  // Gravity of particles
-            opacity: 0.75,  // Opacity of particles
-            trail: 2,  // How long the trails should be
-            delay: 25,  // Delay between firework launches
-        });
-
         // Fetch winner's image from Google Sheets
         const sheetId = '1z4UHaz7ReS5LM56XsN2rqMDuAPaPHl6-rOCUJ3eNVKU';
         const sheetUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv`;
@@ -140,9 +111,6 @@
 
         // Fetch the winner initially
         fetchWinner();
-
-        // Start fireworks animation
-        fireworks.start();
     </script>
 </body>
 </html>
